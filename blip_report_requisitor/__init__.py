@@ -1,0 +1,1 @@
+from blip_report_requisitor.blip_requisitor import Requisitor
