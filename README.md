@@ -35,5 +35,5 @@ today = datetime.now()
 report = requisitor.getCustomReport('/event-track/some%20event', today, today)
 
 # show the report
-print(dumps(report, ident=4))
+print(dumps(report, indent=4))
 ```
