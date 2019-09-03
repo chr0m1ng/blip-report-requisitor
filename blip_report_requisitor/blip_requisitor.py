@@ -18,6 +18,21 @@ class Requisitor(object):
         self.Token = token
         self.Bot = bot
 
+    def getAllCategories(self, take=999999):
+        body = {
+            'id': str(uuid4()),
+            'method': 'get',
+            'to': 'postmaster@analytics.msging.net',
+            'uri': '/event-track?$take=%s' % (take),
+        }
+
+        command = self.Session.post('https://msging.net/commands', json=body)
+        command = command.json()
+        
+        report = [tracking['category'] for tracking in command['resource']['items']]
+
+        return report
+
     def getCustomReport(self, uri, start_date, end_date, take=999999):
         body = {
             'id': str(uuid4()),
