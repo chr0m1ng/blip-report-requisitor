@@ -32,7 +32,7 @@ requisitor = Requisitor('ACCESS_KEY')
 today = datetime.now()
 
 # gets the report
-report = requisitor.getCustomReport('/event-track/some%20event', today, today)
+report = requisitor.getCustomReport('Some Category', today, today)
 
 # show the report
 print(dumps(report, indent=4))
