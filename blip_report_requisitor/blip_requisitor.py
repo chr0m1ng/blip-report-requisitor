@@ -2,7 +2,7 @@ from requests import Session
 from functools import reduce
 from uuid import uuid4
 from json import dumps
-
+from urllib.parse import quote
 
 def percentage(part, whole):
     return round(100 * float(part) / float(whole), 2)
@@ -12,18 +12,24 @@ class Requisitor(object):
 
     def __init__(self, authorization='', token='', bot=''):
         if authorization[0:3].lower() != 'key':
-            authorization = 'Key %s' % authorization
+            authorization = f'Key {authorization}'
         self.Session = Session()
         self.Session.headers.update({'Authorization': authorization})
         self.Token = token
         self.Bot = bot
+
+    def getAllReportsOfAllCategories(self, start_date, end_date, take=999999):    
+        ret = []
+        for category in self.getAllCategories() :
+            ret.append({category: self.getCustomReport(category,start_date,end_date)})
+        return ret
 
     def getAllCategories(self, take=999999):
         body = {
             'id': str(uuid4()),
             'method': 'get',
             'to': 'postmaster@analytics.msging.net',
-            'uri': '/event-track?$take=%s' % (take),
+            'uri': f'/event-track?$take={take}',
         }
 
         command = self.Session.post('https://msging.net/commands', json=body)
@@ -33,16 +39,15 @@ class Requisitor(object):
 
         return report
 
-    def getCustomReport(self, uri, start_date, end_date, take=999999):
+    def getCustomReport(self, category, start_date, end_date, take=999999):
+        category = f'/event-track/{quote(category)}'
+        a = f'normal{category} ne ta'
         body = {
             'id': str(uuid4()),
             'method': 'get',
             'to': 'postmaster@analytics.msging.net',
-            'uri': '%s?startDate=%sT03%%3A00%%3A00.000Z&endDate=%sT03%%3A00%%3A00.000Z&$take=%s' %
-            (uri, start_date.strftime('%Y-%m-%d'),
-             end_date.strftime('%Y-%m-%d'), take)
+            'uri': f'{category}?startDate={start_date.strftime("%Y-%m-%d")}T03%3A00%3A00.000Z&endDate={end_date.strftime("%Y-%m-%d")}T03%3A00%3A00.000Z&$take={take}'
         }
-
         command = self.Session.post(
             'https://msging.net/commands',
             json=body
@@ -59,19 +64,15 @@ class Requisitor(object):
 
     def getTrafficMessagesReport(self, start_date, end_date):
         recv_messages = self.Session.get(
-            'https://api.blip.ai/applications/%s/messages/receivedBy/D/%sT00:00:00.000Z/%sT00:00:00.000Z' %
-            (self.Bot, start_date.strftime('%Y-%m-%d'),
-             end_date.strftime('%Y-%m-%d')),
+            f'https://api.blip.ai/applications/{self.Bot}/messages/receivedBy/D/{start_date.strftime("%Y-%m-%d")}T00:00:00.000Z/{end_date.strftime("%Y-%m-%d")}T00:00:00.000Z',
             headers={
-                'Authorization': 'Bearer %s' % self.Token
+                'Authorization': f'Bearer {self.Token}'
             }
         )
         sent_messages = self.Session.get(
-            'https://api.blip.ai/applications/%s/messages/sentBy/D/%sT00:00:00.000Z/%sT00:00:00.000Z' %
-            (self.Bot, start_date.strftime('%Y-%m-%d'),
-             end_date.strftime('%Y-%m-%d')),
+            f'https://api.blip.ai/applications/{self.Bot}/messages/sentBy/D/{start_date.strftime("%Y-%m-%d")}T00:00:00.000Z/{end_date.strftime("%Y-%m-%d")}T00:00:00.000Z' ,
             headers={
-                'Authorization': 'Bearer %s' % self.Token
+                'Authorization': f'Bearer {self.Token}'
             }
         )
 
