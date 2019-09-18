@@ -31,9 +31,31 @@ requisitor = Requisitor('ACCESS_KEY')
 # today reports
 today = datetime.now()
 
-# gets the report
+# get report of some category
 report = requisitor.getCustomReport('Some Category', today, today)
-
-# show the report
 print(dumps(report, indent=4))
+
+# get all tracking categories
+categories = requisitor.getAllCategories()
+print(dumps(categories, indent=4))
+
+# get all reports of all categories
+report = requisitor.getAllReportsOfAllCategories(today, today)
+print(dumps(report, indent=4))
+
+# get the tickets
+tickets = requisitor.getTickets(today, today)
+print(dumps(tickets, indent=4))
+
+# get the MAU
+Mau = requisitor.getMau(today, today)
+print(Mau)
+
+# get MAU since creation
+Mau = requisitor.getAllMau()
+print(Mau)
+
+# get bot configuration
+bot_config = requisitor.getBotConfiguration()
+print(dumps(bot_config, indent=4))
 ```
