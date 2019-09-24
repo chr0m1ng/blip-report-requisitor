@@ -20,12 +20,12 @@ class Requisitor(object):
         self.Token = token
         self.Bot = bot
 
-    def getTickets(self, start_date, end_date):
+    def getTickets(self, start_date, end_date, take=999999):
         body = {
             'id': str(uuid4()),
             'method': 'get',
             'to': 'postmaster@desk.msging.net',
-            'uri': f"/tickets?$filter=storageDate%20ge%20datetimeoffset'{start_date.strftime('%Y-%m-%d')}T03%3A00%3A00.000Z'%20and%20storageDate%20le%20datetimeoffset'{end_date.strftime('%Y-%m-%d')}T23%3A59%3A00.000Z'%20and%20status%20eq%20'ClosedAttendant'&$skip=0&$take=20"
+            'uri': f"/tickets?$filter=storageDate%20ge%20datetimeoffset'{start_date.strftime('%Y-%m-%d')}T03%3A00%3A00.000Z'%20and%20storageDate%20le%20datetimeoffset'{end_date.strftime('%Y-%m-%d')}T23%3A59%3A00.000Z'%20and%20status%20eq%20'ClosedAttendant'&$skip=0&$take={take}"
         }
         command = self.Session.post('https://msging.net/commands', json=body)
         command = command.json()
