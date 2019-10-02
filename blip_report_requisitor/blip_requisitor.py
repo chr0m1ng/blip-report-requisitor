@@ -25,7 +25,7 @@ class Requisitor(object):
             'id': str(uuid4()),
             'method': 'get',
             'to': 'postmaster@desk.msging.net',
-            'uri': f"/tickets?$filter=storageDate%20ge%20datetimeoffset'{start_date.strftime('%Y-%m-%d')}T03%3A00%3A00.000Z'%20and%20storageDate%20le%20datetimeoffset'{end_date.strftime('%Y-%m-%d')}T23%3A59%3A00.000Z'%20and%20status%20eq%20'ClosedAttendant'&$skip=0&$take={take}"
+            'uri': f"/tickets?$filter=storageDate%20ge%20datetimeoffset'{quote(start_date.isoformat())}Z'%20and%20storageDate%20le%20datetimeoffset'{quote(end_date.isoformat())}Z'%20and%20status%20ne%20'Open'%20and%20status%20ne%20'Waiting'&$skip=0&$take={take}"
         }
         command = self.Session.post('https://msging.net/commands', json=body)
         command = command.json()
@@ -83,7 +83,6 @@ class Requisitor(object):
     def getCustomReport(self, category, start_date, end_date, take=999999):
         if category[0] != '/':
             category = f'/event-track/{quote(category)}'
-        a = f'normal{category} ne ta'
         body = {
             'id': str(uuid4()),
             'method': 'get',
