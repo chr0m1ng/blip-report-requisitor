@@ -21,6 +21,10 @@ class Requisitor(object):
         self.Bot = bot
 
     def getTickets(self, start_date, end_date, take=999999):
+        start_date, end_date = Requisitor.fixStartEndDateOffset(
+            start_date,
+            end_date
+        )
         body = {
             'id': str(uuid4()),
             'method': 'get',
@@ -183,3 +187,10 @@ class Requisitor(object):
             if track['acao'] == action:
                 return i
         return default
+
+    @staticmethod
+    def fixStartEndDateOffset(start, end):
+        if (start == end):
+            start = start.replace(hour=0, minute=0)
+            end = end.replace(hour=23, minute=59)
+        return start, end
