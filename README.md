@@ -1,4 +1,6 @@
 # Blip Report Requisitor
+[![PyPI version](https://badge.fury.io/py/blip-report-requisitor.svg)](https://badge.fury.io/py/blip-report-requisitor)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/blip-report-requisitor)
 
 Wrapper to get blip reports information easily
 
